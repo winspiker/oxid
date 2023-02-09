@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  php:
+    image: oxid:latest
+    ports:
+    - '8080:80'
+    depends_on:
+      - database
+    extra_hosts:
+      - "host.internal.docker:host-gateway"
+    env_file:
+      - .env.docker
+    volumes:
+    - ./app:/app
+    - ./docker/apache/conf/sites-available/000-default.conf:/etc/apache2/sites-available/000-default.conf
+    - ./docker/apache/conf/mods-enabled/rewrite.load:/etc/apache2/mods-enabled/rewrite.load
+    - ./docker/apache/conf/apache2.conf:/etc/apache2/apache2.conf
+
+  database:
+    image: mariadb:10.4
+    ports:
+    - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: main
+      MYSQL_DATABASE: main
+      MYSQL_USER: main
+      MYSQL_PASSWORD: main
+    volumes:
+    - ./databases/mariadb:/var/lib/mysql
